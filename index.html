@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>IMSoft — Mobile Game Studio</title>
+  <meta name="description" content="IMSoft is a small, independent studio in Vietnam making casual puzzle and idle games for iOS and Android with Unity." />
+  <link rel="canonical" href="https://imsoft.vn/" />
+  <meta property="og:title" content="IMSoft — Mobile Game Studio" />
+  <meta property="og:description" content="A small studio in Vietnam making casual games for iOS and Android. Here’s what we’re working on." />
+  <meta property="og:url" content="https://imsoft.vn/" />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230d0b2b'/%3E%3Crect x='10' y='22' width='44' height='24' rx='12' fill='%237c5cff'/%3E%3Cpath d='M19 30v8M15 34h8' stroke='%23fff' stroke-width='3' stroke-linecap='round'/%3E%3Ccircle cx='42' cy='31' r='3' fill='%23ffd166'/%3E%3Ccircle cx='47' cy='37' r='3' fill='%2300e0b8'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f7f7fc;
+      --surface: #ffffff;
+      --ink: #0d0b2b;
+      --ink-2: #4b4970;
+      --line: #e4e3f2;
+      --brand: #7c5cff;
+      --brand-2: #ff5c93;
+      --accent: #ffd166;
+      --mint: #00e0b8;
+      --night: #0d0b2b;
+      --night-2: #1a1650;
+      --radius: 18px;
+      --shadow: 0 10px 30px -12px rgba(13, 11, 43, .18);
+      --max: 1160px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: inherit; text-decoration: none; }
+    img, svg { display: block; max-width: 100%; }
+    .wrap { width: min(var(--max), 100% - 32px); margin-inline: auto; }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+      color: var(--brand);
+    }
+    h1, h2, h3 { line-height: 1.15; margin: 0; letter-spacing: -.02em; }
+    h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 800; }
+    h3 { font-size: 20px; font-weight: 700; }
+    p { margin: 0; color: var(--ink-2); }
+    .lead { font-size: 18px; }
+    section { padding: 96px 0; }
+    .section-head { max-width: 680px; margin-bottom: 48px; display: grid; gap: 14px; }
+    .section-head.center { margin-inline: auto; text-align: center; justify-items: center; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 22px; border-radius: 999px; font-weight: 700; font-size: 15px;
+      border: 1px solid transparent; cursor: pointer; transition: transform .15s, box-shadow .15s, background .15s;
+      font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; box-shadow: 0 8px 24px -8px rgba(124, 92, 255, .6); }
+    .btn-ghost { background: transparent; border-color: var(--line); color: var(--ink); }
+    .btn-ghost:hover { background: var(--surface); }
+    .btn-light { background: #fff; color: var(--night); }
+
+    /* Header */
+    header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(247, 247, 252, .82); backdrop-filter: saturate(160%) blur(12px);
+      border-bottom: 1px solid transparent; transition: border-color .2s;
+    }
+    header.scrolled { border-color: var(--line); }
+    .nav { display: flex; align-items: center; justify-content: space-between; height: 72px; gap: 24px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 20px; letter-spacing: -.02em; }
+    .nav-links { display: flex; gap: 32px; font-weight: 500; font-size: 15px; color: var(--ink-2); }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta { display: flex; gap: 10px; align-items: center; }
+    .menu-btn { display: none; background: none; border: 0; padding: 8px; cursor: pointer; color: var(--ink); }
+    @media (max-width: 860px) {
+      .nav-links, .nav-cta .btn-ghost { display: none; }
+      .menu-btn { display: block; }
+      .nav-links.open {
+        display: grid; gap: 4px; position: absolute; top: 72px; left: 0; right: 0;
+        background: var(--surface); padding: 12px 16px 20px; border-bottom: 1px solid var(--line);
+      }
+      .nav-links.open a { padding: 10px 0; }
+    }
+
+    /* Hero */
+    .hero { padding: 72px 0 64px; position: relative; overflow: hidden; }
+    .hero::before {
+      content: ""; position: absolute; inset: -20% -10% auto auto; width: 720px; height: 720px;
+      background: radial-gradient(closest-side, rgba(124, 92, 255, .18), transparent 70%);
+      pointer-events: none;
+    }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 56px; align-items: center; position: relative; }
+    .hero h1 { font-size: clamp(38px, 6vw, 64px); font-weight: 800; }
+    .hero h1 .grad { background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .hero-copy { display: grid; gap: 22px; }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 6px; }
+    .hero-note { font-size: 14px; display: flex; gap: 18px; flex-wrap: wrap; }
+    .hero-note span::before { content: "✓ "; color: var(--brand); font-weight: 700; }
+    @media (max-width: 960px) { .hero-grid { grid-template-columns: 1fr; } }
+
+    /* Phone illustration */
+    .stage { position: relative; display: grid; place-items: center; padding: 20px 0; }
+    .stage::after {
+      content: ""; position: absolute; width: 340px; height: 340px; border-radius: 50%;
+      background: radial-gradient(closest-side, rgba(255, 92, 147, .28), transparent);
+      z-index: 0;
+    }
+    .phone {
+      position: relative; z-index: 1; width: 270px; aspect-ratio: 9 / 18.5; border-radius: 40px; padding: 12px;
+      background: var(--night); box-shadow: 0 30px 60px -20px rgba(13, 11, 43, .5), inset 0 0 0 2px rgba(255, 255, 255, .08);
+    }
+    .screen {
+      height: 100%; border-radius: 30px; overflow: hidden; position: relative;
+      background: linear-gradient(180deg, #2a1f7a 0%, #6a3fd6 55%, #ff7aa8 100%);
+      display: grid; grid-template-rows: auto 1fr auto; padding: 34px 16px 18px; color: #fff;
+    }
+    .notch { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; border-radius: 12px; background: var(--night); }
+    .hud { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; }
+    .hud span { background: rgba(0, 0, 0, .25); padding: 4px 10px; border-radius: 999px; }
+    .board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; align-content: center; padding: 8px 0; }
+    .board i { aspect-ratio: 1; border-radius: 10px; box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .18); }
+    .board i.pop { animation: pop 1.8s ease-in-out infinite; }
+    @keyframes pop { 0%, 70%, 100% { transform: scale(1); } 80% { transform: scale(1.18); } 90% { transform: scale(.9); } }
+    .t1 { background: var(--accent); } .t2 { background: var(--mint); } .t3 { background: #ff5c93; } .t4 { background: #59a8ff; } .t5 { background: #b48cff; }
+    .play-bar { display: flex; gap: 8px; }
+    .play-bar span { flex: 1; text-align: center; font-size: 12px; font-weight: 700; padding: 10px 0; border-radius: 14px; background: rgba(255, 255, 255, .16); }
+    .play-bar span.main { background: var(--accent); color: var(--night); }
+    @media (prefers-reduced-motion: reduce) { .board i.pop { animation: none; } }
+
+    /* Platform strip */
+    .sources { padding: 28px 0 0; }
+    .sources p { text-align: center; font-size: 14px; margin-bottom: 18px; }
+    .source-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .source-list span {
+      padding: 8px 16px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line);
+      font-size: 14px; font-weight: 600; color: var(--ink-2);
+    }
+
+    /* Games */
+    .games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .games { grid-template-columns: 1fr; } }
+    .game { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; display: grid; transition: transform .2s, box-shadow .2s; }
+    .game:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .game-art { aspect-ratio: 16 / 10; display: grid; place-items: center; position: relative; }
+    .game-art svg { width: 38%; }
+    .game-body { padding: 22px 24px 26px; display: grid; gap: 10px; }
+    .tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tag { font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: var(--bg); color: var(--ink-2); border: 1px solid var(--line); }
+    .tag.soon { background: rgba(124, 92, 255, .1); color: var(--brand); border-color: transparent; }
+
+    /* Feature split */
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+    .split.reverse > :first-child { order: 2; }
+    @media (max-width: 900px) { .split, .split.reverse { grid-template-columns: 1fr; gap: 36px; } .split.reverse > :first-child { order: 0; } }
+    .checks { list-style: none; padding: 0; margin: 24px 0 0; display: grid; gap: 14px; }
+    .checks li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; color: var(--ink-2); }
+    .checks li b { color: var(--ink); display: block; }
+    .tick { width: 28px; height: 28px; border-radius: 8px; background: rgba(124, 92, 255, .1); color: var(--brand); display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 24px; box-shadow: var(--shadow); }
+
+    /* Mock: pipeline stages */
+    .stages { display: grid; gap: 12px; }
+    .stage-row { display: grid; grid-template-columns: 36px 1fr; gap: 14px; align-items: center; padding: 14px; border-radius: 14px; background: var(--bg); }
+    .stage-row .num { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; font-weight: 800; color: #fff; background: linear-gradient(135deg, var(--brand), var(--brand-2)); }
+    .stage-row b { display: block; font-size: 15px; }
+    .stage-row small { color: var(--ink-2); font-size: 13px; }
+
+    /* Cards */
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .cards { grid-template-columns: 1fr; } }
+    .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; display: grid; gap: 12px; align-content: start; transition: transform .2s, box-shadow .2s; }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #fff; }
+
+    /* Partners (dark) */
+    .dark { background: var(--night); color: #fff; position: relative; overflow: hidden; }
+    .dark p { color: #bdbae6; }
+    .dark .eyebrow { color: var(--accent); }
+    .dark::before {
+      content: ""; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
+      width: 900px; height: 500px; background: radial-gradient(closest-side, rgba(124, 92, 255, .35), transparent);
+    }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; position: relative; }
+    @media (max-width: 800px) { .compare { grid-template-columns: 1fr; } }
+    .compare > div { border-radius: var(--radius); padding: 32px; display: grid; gap: 14px; align-content: start; }
+    .compare .them { background: rgba(255, 255, 255, .04); border: 1px solid rgba(255, 255, 255, .1); }
+    .compare .us { background: linear-gradient(160deg, var(--night-2), #3a1f6e); border: 1px solid rgba(255, 92, 147, .45); }
+    .compare ul { list-style: none; padding: 0; margin: 6px 0 0; display: grid; gap: 10px; color: #dad8f5; }
+    .compare li::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+
+    /* Tech grid */
+    .connectors { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+    .conn { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; font-weight: 600; font-size: 15px; }
+    .conn .badge { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-size: 13px; font-weight: 800; color: #fff; flex: none; }
+
+    /* CTA + form */
+    .cta-box { background: linear-gradient(135deg, var(--brand), var(--brand-2)); border-radius: 28px; padding: 56px; color: #fff; display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    .cta-box p { color: rgba(255, 255, 255, .88); }
+    .cta-box a.mail { color: #fff; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 900px) { .cta-box { grid-template-columns: 1fr; padding: 32px 22px; } }
+    form { display: grid; gap: 12px; background: #fff; padding: 24px; border-radius: 20px; }
+    label { font-size: 13px; font-weight: 600; color: var(--ink-2); display: grid; gap: 6px; }
+    input, select, textarea {
+      font: inherit; font-size: 15px; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+      background: var(--bg); color: var(--ink); width: 100%;
+    }
+    input:focus, select:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 520px) { .form-row { grid-template-columns: 1fr; } }
+    .form-ok { display: none; color: #12a150; font-weight: 600; font-size: 14px; }
+
+    /* FAQ */
+    .faq { max-width: 780px; margin-inline: auto; display: grid; gap: 12px; }
+    details { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 22px; }
+    summary { cursor: pointer; font-weight: 700; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+    summary::-webkit-details-marker { display: none; }
+    summary::after { content: "+"; color: var(--brand); font-size: 20px; line-height: 1; }
+    details[open] summary::after { content: "–"; }
+    details p { margin-top: 12px; }
+
+    /* Footer */
+    footer { background: var(--night); color: #bdbae6; padding: 64px 0 32px; font-size: 14px; }
+    .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+    @media (max-width: 800px) { .foot-grid { grid-template-columns: 1fr 1fr; } }
+    footer h4 { color: #fff; margin: 0 0 14px; font-size: 14px; }
+    footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+    footer a:hover { color: #fff; }
+    .foot-bottom { border-top: 1px solid rgba(255, 255, 255, .08); margin-top: 48px; padding-top: 24px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+
+    /* Reveal on scroll */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+    .reveal.in { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+  </style>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header id="top">
+    <div class="wrap nav">
+      <a href="#top" class="logo" aria-label="IMSoft home">
+        <svg width="34" height="34" viewBox="0 0 64 64" aria-hidden="true">
+          <rect width="64" height="64" rx="14" fill="#0d0b2b"/>
+          <rect x="10" y="22" width="44" height="24" rx="12" fill="#7c5cff"/>
+          <path d="M19 30v8M15 34h8" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="42" cy="31" r="3" fill="#ffd166"/>
+          <circle cx="47" cy="37" r="3" fill="#00e0b8"/>
+        </svg>
+        IMSoft
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#games">Games</a>
+        <a href="#studio">Studio</a>
+        <a href="#services">Services</a>
+        <a href="#partners">Partners</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="nav-cta">
+        <a href="#contact" class="btn btn-primary">Contact us</a>
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ========== HERO ========== -->
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">● Independent game studio · Vietnam</span>
+          <h1>We make casual games<br/><span class="grad">for your phone.</span></h1>
+          <p class="lead">IMSoft is a small studio in Vietnam building puzzle and idle games for iOS and Android. We’re early on our journey — making prototypes, testing them with players, and keeping only the ones that are actually fun.</p>
+          <div class="hero-actions">
+            <a href="#games" class="btn btn-primary">What we’re working on →</a>
+            <a href="#contact" class="btn btn-ghost">Say hello</a>
+          </div>
+          <div class="hero-note"><span>iOS &amp; Android</span><span>Made with Unity</span><span>Based in Vietnam</span></div>
+        </div>
+
+        <div class="stage reveal" aria-hidden="true">
+          <div class="phone">
+            <div class="screen">
+              <div class="notch"></div>
+              <div class="hud"><span>Level 24</span><span>⭐ 1,280</span></div>
+              <div class="board">
+                <i class="t1"></i><i class="t2"></i><i class="t3 pop"></i><i class="t4"></i><i class="t5"></i>
+                <i class="t4"></i><i class="t1 pop" style="animation-delay:.3s"></i><i class="t2"></i><i class="t5"></i><i class="t3"></i>
+                <i class="t3"></i><i class="t5"></i><i class="t4"></i><i class="t1"></i><i class="t2 pop" style="animation-delay:.6s"></i>
+                <i class="t2"></i><i class="t4"></i><i class="t5 pop" style="animation-delay:.9s"></i><i class="t3"></i><i class="t1"></i>
+                <i class="t5"></i><i class="t3"></i><i class="t1"></i><i class="t2"></i><i class="t4"></i>
+                <i class="t1"></i><i class="t2"></i><i class="t4"></i><i class="t3 pop" style="animation-delay:1.2s"></i><i class="t5"></i>
+              </div>
+              <div class="play-bar"><span>Shop</span><span class="main">Play</span><span>Events</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap sources">
+        <p>The tools we use day to day</p>
+        <div class="source-list">
+          <span>Unity</span><span>iOS</span><span>Android</span><span>App Store</span><span>Google Play</span><span>Firebase</span><span>AdMob</span><span>AppLovin MAX</span><span>Unity Ads</span><span>GameAnalytics</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== GAMES ========== -->
+    <!-- TODO: replace these placeholder cards with your real titles, artwork, and store links -->
+    <section id="games" style="padding-top:64px">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">On our desks right now</span>
+          <h2>What we’re working on</h2>
+          <p class="lead">None of these are in the stores yet. They’re projects at different stages — some will ship, some won’t. We’ll add store links here when they’re live.</p>
+        </div>
+        <div class="games">
+          <article class="game reveal">
+            <div class="game-art" style="background:linear-gradient(135deg,#7c5cff,#59a8ff)">
+              <svg viewBox="0 0 64 64"><rect x="6" y="6" width="24" height="24" rx="6" fill="#ffd166"/><rect x="34" y="6" width="24" height="24" rx="6" fill="#00e0b8"/><rect x="6" y="34" width="24" height="24" rx="6" fill="#ff5c93"/><rect x="34" y="34" width="24" height="24" rx="6" fill="#fff"/></svg>
+            </div>
+            <div class="game-body">
+              <div class="tags"><span class="tag">Puzzle</span><span class="tag soon">In development</span></div>
+              <h3>Match &amp; merge puzzle</h3>
+              <p>A puzzle game for two-minute breaks. We’re currently designing levels and tuning the difficulty curve.</p>
+            </div>
+          </article>
+          <article class="game reveal">
+            <div class="game-art" style="background:linear-gradient(135deg,#ff5c93,#ffd166)">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#fff"/><path d="M32 16v16l11 7" stroke="#7c5cff" stroke-width="5" stroke-linecap="round" fill="none"/></svg>
+            </div>
+            <div class="game-body">
+              <div class="tags"><span class="tag">Idle</span><span class="tag soon">Coming soon</span></div>
+              <h3>Idle tycoon</h3>
+              <p>Build and upgrade a small business that keeps earning while you’re away. The core loop works; the economy still needs balancing.</p>
+            </div>
+          </article>
+          <article class="game reveal">
+            <div class="game-art" style="background:linear-gradient(135deg,#00e0b8,#7c5cff)">
+              <svg viewBox="0 0 64 64"><path d="M10 50 32 10l22 40z" fill="#fff"/><circle cx="32" cy="38" r="6" fill="#ff5c93"/></svg>
+            </div>
+            <div class="game-body">
+              <div class="tags"><span class="tag">Hyper-casual</span><span class="tag soon">Prototyping</span></div>
+              <h3>One-tap arcade</h3>
+              <p>A quick experiment: one thumb, one rule. If players keep tapping after the first minute, we’ll keep building it.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== STUDIO: HOW WE BUILD ========== -->
+    <section id="studio" style="padding-top:0">
+      <div class="wrap split">
+        <div class="reveal">
+          <span class="eyebrow">How we work</span>
+          <h2 style="margin-top:12px">Small bets, honest numbers</h2>
+          <p class="lead" style="margin-top:16px">Most game ideas don’t work, and that’s fine. We’d rather find out in a week than in six months. So we build something rough, put it in front of players, and let what they do tell us whether to keep going.</p>
+          <ul class="checks">
+            <li><span class="tick">✓</span><div><b>Prototype first</b>A rough playable build beats a polished design document.</div></li>
+            <li><span class="tick">✓</span><div><b>Let players decide</b>If people don’t come back the next day, we change the game or move on.</div></li>
+            <li><span class="tick">✓</span><div><b>Keep improving after launch</b>Shipping is the start. Updates, fixes, and new content come after.</div></li>
+          </ul>
+        </div>
+        <div class="panel reveal">
+          <p style="font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:14px">The path every idea takes</p>
+          <div class="stages">
+            <div class="stage-row"><span class="num">1</span><div><b>Idea</b><small>One sentence: what’s fun about it?</small></div></div>
+            <div class="stage-row"><span class="num">2</span><div><b>Prototype</b><small>Rough, playable, ugly is OK</small></div></div>
+            <div class="stage-row"><span class="num">3</span><div><b>Playtest</b><small>Watch real players, read the data</small></div></div>
+            <div class="stage-row"><span class="num">4</span><div><b>Soft launch</b><small>A few markets, tune the details</small></div></div>
+            <div class="stage-row"><span class="num">5</span><div><b>Launch &amp; update</b><small>Release, listen, improve</small></div></div>
+          </div>
+          <p style="font-size:13px;margin-top:14px">Most ideas stop at step 2 or 3. That’s the point.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== SERVICES ========== -->
+    <section id="services" style="background:var(--surface);border-block:1px solid var(--line)">
+      <div class="wrap split reverse">
+        <div class="reveal">
+          <span class="eyebrow">Services</span>
+          <h2 style="margin-top:12px">We also build games for others</h2>
+          <p class="lead" style="margin-top:16px">Alongside our own projects, we take on a small number of outside projects. We keep it to a few at a time, so each one gets real attention.</p>
+          <ul class="checks">
+            <li><span class="tick">✓</span><div><b>Design to store release</b>We can take a game from idea to App Store and Google Play, or help with one part of it.</div></li>
+            <li><span class="tick">✓</span><div><b>Ads and in-app purchases</b>Rewarded ads and IAP set up so they earn without annoying players.</div></li>
+            <li><span class="tick">✓</span><div><b>Analytics set up properly</b>Event tracking in place from the first build, so you can see what players actually do.</div></li>
+          </ul>
+        </div>
+        <div class="cards reveal" style="grid-template-columns:1fr 1fr">
+          <div class="card"><div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="10" rx="5"/><path d="M8 11v4M6 13h4"/></svg></div><h3>Game design</h3><p>Core loops, levels, and economy.</p></div>
+          <div class="card"><div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6 3 12l5 6M16 6l5 6-5 6"/></svg></div><h3>Development</h3><p>Unity builds for iOS &amp; Android.</p></div>
+          <div class="card"><div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1.5"/><circle cx="15" cy="10" r="1.5"/><path d="M8 15c2 2 6 2 8 0"/></svg></div><h3>Art &amp; UI</h3><p>2D/3D art, animation, and UX.</p></div>
+          <div class="card"><div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M6 16l4-6 4 4 5-8"/></svg></div><h3>Live ops</h3><p>Events, updates, and A/B tests.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== WHY US ========== -->
+    <section>
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <span class="eyebrow">What we care about</span>
+          <h2>Games we’d want on our own phones</h2>
+          <p class="lead">A few simple rules we try to stick to, in our own games and in the ones we build for others.</p>
+        </div>
+        <div class="cards">
+          <div class="card reveal">
+            <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg></div>
+            <h3>No ad after every tap</h3>
+            <p>Ads should be something players choose, like a rewarded video for an extra life, not a punishment for playing.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg></div>
+            <h3>Feel matters</h3>
+            <p>Most of the work is in the details: how a tile snaps, how long an animation lasts, what a button sounds like.</p>
+          </div>
+          <div class="card reveal">
+            <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+            <h3>Talk to the makers</h3>
+            <p>No account managers. When you email us, you’re talking to the people who actually build the games.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== PARTNERS ========== -->
+    <section id="partners" class="dark">
+      <div class="wrap" style="position:relative">
+        <div class="section-head center reveal">
+          <span class="eyebrow">Partner with us</span>
+          <h2>Looking for a studio to work with?</h2>
+          <p class="lead">We’re open to working with publishers, and with businesses that want a game of their own. Here’s what you can expect from us.</p>
+        </div>
+        <div class="compare">
+          <div class="them reveal">
+            <h3>Publishers</h3>
+            <p>Got a brief, or want to see what we’re prototyping?</p>
+            <ul>
+              <li>Early builds shared as soon as they’re playable</li>
+              <li>Test data shared as it is, good or bad</li>
+              <li>Quick turnaround on changes</li>
+              <li>Continued updates after launch</li>
+            </ul>
+          </div>
+          <div class="us reveal">
+            <h3>Businesses &amp; brands</h3>
+            <p>Want a game for your product or campaign?</p>
+            <ul>
+              <li>Branded and promotional mini-games</li>
+              <li>Help from idea through store release</li>
+              <li>Porting or updating an existing game</li>
+              <li>A clear scope and timeline before we start</li>
+            </ul>
+            <a href="#contact" class="btn btn-light" style="justify-self:start;margin-top:8px">Tell us about your project →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== TECH ========== -->
+    <section id="tech">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <span class="eyebrow">Tech &amp; tools</span>
+          <h2>What we build with</h2>
+          <p class="lead">Nothing exotic. Standard tools that most mobile teams and publishers already know, so handing over a project is easy.</p>
+        </div>
+        <div class="connectors reveal">
+          <div class="conn"><span class="badge" style="background:#000">U</span>Unity</div>
+          <div class="conn"><span class="badge" style="background:#68217a">C#</span>C#</div>
+          <div class="conn"><span class="badge" style="background:#111">iOS</span>iOS</div>
+          <div class="conn"><span class="badge" style="background:#3ddc84;color:#0d0b2b">An</span>Android</div>
+          <div class="conn"><span class="badge" style="background:#ffca28;color:#0d0b2b">Fb</span>Firebase</div>
+          <div class="conn"><span class="badge" style="background:#4285f4">Ad</span>AdMob</div>
+          <div class="conn"><span class="badge" style="background:#0f5fff">AL</span>AppLovin MAX</div>
+          <div class="conn"><span class="badge" style="background:#222c37">UA</span>Unity Ads</div>
+          <div class="conn"><span class="badge" style="background:#ff6c37">GA</span>GameAnalytics</div>
+          <div class="conn"><span class="badge" style="background:#f05033">Gi</span>Git</div>
+          <div class="conn"><span class="badge" style="background:#ff5c93">Fi</span>Figma</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section id="faq" style="padding-top:0">
+      <div class="wrap">
+        <div class="section-head center reveal">
+          <span class="eyebrow">FAQ</span>
+          <h2>Questions, answered</h2>
+        </div>
+        <div class="faq reveal">
+          <details open><summary>Can I download your games yet?</summary><p>Not yet. Our first games are still in development. When one goes live, it’ll be listed on this page with links to the App Store and Google Play.</p></details>
+          <details><summary>Can I help test a game before it’s released?</summary><p>Yes, please! Email <a href="mailto:tuanngv@imsoft.vn" style="color:var(--brand);font-weight:600">tuanngv@imsoft.vn</a> and tell us whether you use iPhone or Android. We’ll send you a test build when one is ready.</p></details>
+          <details><summary>Can IMSoft build a game for my company?</summary><p>Possibly. Tell us what you have in mind and we’ll be honest about whether it’s a good fit, and roughly how long it would take.</p></details>
+          <details><summary>Do you work with publishers?</summary><p>Yes. We’re happy to share prototypes and test results, or to build to a publisher’s brief.</p></details>
+          <details><summary>Are you hiring?</summary><p>We’re not always hiring, but we’re always glad to hear from game designers, Unity developers, and artists. Send a portfolio or a game you’ve made to <a href="mailto:tuanngv@imsoft.vn" style="color:var(--brand);font-weight:600">tuanngv@imsoft.vn</a>.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CTA / CONTACT ========== -->
+    <section id="contact" style="padding-top:0">
+      <div class="wrap">
+        <div class="cta-box reveal">
+          <div style="display:grid;gap:16px">
+            <h2>Want to say hello?</h2>
+            <p class="lead">A project, a partnership, a job, or feedback on one of our games: we read every message ourselves and reply as soon as we can.</p>
+            <p>Or email us directly: <a class="mail" href="mailto:tuanngv@imsoft.vn">tuanngv@imsoft.vn</a></p>
+          </div>
+          <!-- Opens the visitor's email app addressed to tuanngv@imsoft.vn. Point action to a form backend (Formspree, your API, ...) to collect messages directly instead. -->
+          <form id="contactForm" action="#" method="post">
+            <div class="form-row">
+              <label>Full name<input name="name" required autocomplete="name" /></label>
+              <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+            </div>
+            <div class="form-row">
+              <label>Company<input name="company" autocomplete="organization" /></label>
+              <label>Topic
+                <select name="topic">
+                  <option>Game development project</option><option>Publishing partnership</option><option>Playtesting</option><option>Careers</option><option>Other</option>
+                </select>
+              </label>
+            </div>
+            <label>Message<textarea name="message" rows="3"></textarea></label>
+            <button class="btn btn-primary" type="submit" style="justify-content:center">Send message</button>
+            <p class="form-ok" id="formOk">Your email app should open with the message ready to send.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer>
+    <div class="wrap">
+      <div class="foot-grid">
+        <div style="display:grid;gap:14px;align-content:start">
+          <a href="#top" class="logo" style="color:#fff">
+            <svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#1a1650"/><rect x="10" y="22" width="44" height="24" rx="12" fill="#7c5cff"/><path d="M19 30v8M15 34h8" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="42" cy="31" r="3" fill="#ffd166"/><circle cx="47" cy="37" r="3" fill="#00e0b8"/></svg>
+            IMSoft
+          </a>
+          <p style="max-width:300px">A small, independent mobile game studio in Vietnam.</p>
+          <p><a href="mailto:tuanngv@imsoft.vn">tuanngv@imsoft.vn</a></p>
+        </div>
+        <div><h4>Studio</h4><ul><li><a href="#games">Games</a></li><li><a href="#studio">How we build</a></li><li><a href="#tech">Tech</a></li></ul></div>
+        <div><h4>Work with us</h4><ul><li><a href="#services">Services</a></li><li><a href="#partners">Partners</a></li><li><a href="#contact">Contact</a></li></ul></div>
+        <div><h4>Help</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="mailto:tuanngv@imsoft.vn">tuanngv@imsoft.vn</a></li></ul></div>
+      </div>
+      <div class="foot-bottom">
+        <span>© <span id="year">2026</span> IMSoft · imsoft.vn. All rights reserved.</span>
+        <span><a href="#">Privacy</a> · <a href="#">Terms</a></span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Sticky header border
+    const header = document.querySelector('header');
+    addEventListener('scroll', () => header.classList.toggle('scrolled', scrollY > 8), { passive: true });
+
+    // Mobile menu
+    const menuBtn = document.getElementById('menuBtn');
+    const navLinks = document.getElementById('navLinks');
+    menuBtn.addEventListener('click', () => {
+      const open = navLinks.classList.toggle('open');
+      menuBtn.setAttribute('aria-expanded', open);
+    });
+    navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('open')));
+
+    // Reveal on scroll
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .12 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Contact form: compose an email to the studio (skipped once a real backend action is set)
+    document.getElementById('contactForm').addEventListener('submit', e => {
+      if (e.target.getAttribute('action') !== '#') return;
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const subject = `[${f.get('topic')}] ${f.get('name')}${f.get('company') ? ' – ' + f.get('company') : ''}`;
+      const body = `${f.get('message')}\n\n—\n${f.get('name')}\n${f.get('email')}${f.get('company') ? '\n' + f.get('company') : ''}`;
+      location.href = `mailto:tuanngv@imsoft.vn?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      document.getElementById('formOk').style.display = 'block';
+    });
+
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
